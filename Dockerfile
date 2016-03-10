@@ -1,22 +1,32 @@
 #
-## Ubuntu CK-DevWorkspace Version 0.1
+# Ubuntu Dockerfile (Patrick Tully)
 #
+# https://github.com/thepro101/ubuntu/
 #
-#
-## Pull base image.
-FROM dockerfile/ubuntu
 
-# Install LXDE and VNC server.
+# Pull base image.
+FROM ubuntu:14.04
+
+# Install.
 RUN \
- apt-get update && \
- DEBIAN_FRONTEND=noninteractive apt-get install -y lxde-core lxterminal tightvncserver && \
- rm -rf /var/lib/apt/lists/*
+  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+  apt-get update && \
+  apt-get -y upgrade && \
+  apt-get install -y build-essential && \
+  apt-get install -y software-properties-common && \
+  apt-get install -y byobu curl git htop man unzip vim wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# Add files.
+ADD root/.bashrc /root/.bashrc
+ADD root/.gitconfig /root/.gitconfig
+ADD root/.scripts /root/.scripts
+
+# Set environment variables.
+ENV HOME /root
 
 # Define working directory.
-WORKDIR /data
+WORKDIR /root
 
 # Define default command.
 CMD ["bash"]
-
-# Expose ports.
-EXPOSE 5901
